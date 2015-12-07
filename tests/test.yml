@@ -1,0 +1,23 @@
+---
+
+# First time: no key pairs | should only create dirs
+- hosts: all
+  roles:
+    - ../../
+
+# Second time: we create self signed pairs on before
+- hosts: all
+  pre_tasks:
+    - name: INCLUDE_VARS | We must load explicitely vars before role...
+      include_vars: ../defaults/main.yml
+    - name: SET_FACT
+      set_fact:
+        ssl_pairs: ['foo', 'bar']
+    - name: LOCAL_ACTION COMMAND | Creates self-signed certificate with private key 
+      local_action: >
+        command openssl req -new -nodes -x509 -days 365 -newkey rsa:2048 -keyout {{ ssl_local_private_dir }}/{{ item }}.key -out {{ ssl_local_cert_dir }}/{{ item }}.crt -subj "/C=FR/L=Lron/O=Debianiste/OU=IT/CN={{ item }}.debianiste" 
+        creates={{ ssl_local_private_dir }}/{{ item }}.key
+      with_items: ssl_pairs
+  roles:
+    - ../../
+

@@ -1,0 +1,11 @@
+---
+
+- name: reload nginx
+  service: name=nginx state=reloaded
+
+- name: restart apache2
+  service: name=apache2 state=restarted
+
+- name: none
+  service: name=dummy state=restarted
+  when: false

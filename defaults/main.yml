@@ -1,0 +1,13 @@
+---
+# local directories
+ssl_local_root_dir: './ssl_files'
+ssl_local_cert_dir: '{{ ssl_local_root_dir }}/certs'
+ssl_local_private_dir: '{{ ssl_local_root_dir }}/private'
+
+# remote directories
+ssl_root_dir: '/etc/nginx/ssl'
+ssl_cert_dir: '{{ ssl_root_dir }}/certs'
+ssl_private_dir: '{{ ssl_root_dir }}/private'
+
+ssl_pairs: []
+ssl_notify: 'dummy'
