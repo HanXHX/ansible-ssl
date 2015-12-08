@@ -1,7 +1,8 @@
 SSL management Ansible role
 ===========================
+[![Ansible Galaxy](http://img.shields.io/badge/ansible--galaxy-HanXHX.ssl-blue.svg)](https://galaxy.ansible.com/list#/roles/6420) [![Build Status](https://travis-ci.org/HanXHX/ansible-ssl.svg?branch=master)](https://travis-ci.org/HanXHX/ansible-ssl)
 
-This role manages key/cert pairs. It checks modulus et deployment.
+This role manages key/cert pairs. It checks modulus and deployment.
 
 Requirements
 ------------
