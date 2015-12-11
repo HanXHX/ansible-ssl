@@ -7,7 +7,7 @@ This role manages key/cert pairs. It checks modulus and deployment.
 Requirements
 ------------
 
-- On local machine, you need OpenSSL. LibreSSL can be managed (you can PR).
+- On local machine, you need OpenSSL (available from PATH). LibreSSL can be managed (you can PR).
 
 Role Variables
 --------------

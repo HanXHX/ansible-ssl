@@ -1,0 +1,23 @@
+---
+
+- name: LOCAL_ACTION FILE | Create local directories
+  local_action: file path={{ item }} state=directory
+  become: no
+  with_items:
+    - "{{ ssl_local_private_dir }}"
+    - "{{ ssl_local_certs_dir }}"
+    - "{{ ssl_local_dh_dir }}"
+
+- name: FILE | Create directories
+  file: path={{ item }} state=directory owner=root group=root
+  become: no
+  with_items:
+    - "{{ ssl_private_dir }}"
+    - "{{ ssl_certs_dir }}"
+    - "{{ ssl_dh_dir }}"
+
+#- name: SET_FACT | Register files per entry
+#  set_fact: >
+#    ssl_pairs='[{% for pair in ssl_pairs %}{ "name": "{{ pair.name }}" }{% if not loop.last %},{% endif %}{% endfor %}]'
+##ssl_pairs='[{% for pair in ssl_pairs %}{{ pair | combine({ "cert": "{{ ssl_certs_dir }}/{{ pair.name }}.crt", "private": "{{ ssl_private_dir }}/{{ pair.name }}.key", "local_cert": "{{ ssl_local_certs_dir }}/{{ pair.name }}.crt", "local_private": "{{ ssl_local_private_dir }}/{{ pair.name }}.key" }) }}{% if not loop.last %},{% endif %}{% endfor %}]'
+

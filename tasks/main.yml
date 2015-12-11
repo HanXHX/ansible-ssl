@@ -1,60 +1,14 @@
 ---
 
-- name: LOCAL_ACTION FILE | Create local directories
-  local_action: file path={{ item }} state=directory
-  become: no
-  with_items:
-    - "{{ ssl_local_private_dir }}"
-    - "{{ ssl_local_cert_dir }}"
+- name: INCLUDE | Prepare directories
+  include: prepare.yml
 
-- name: FILE | Create directories
-  file: path={{ item }} state=directory owner=root group=root
-  with_items:
-    - "{{ ssl_private_dir }}"
-    - "{{ ssl_cert_dir }}"
+- name: INCLUDE | Generate keys
+  include: generate.yml
 
-- name: SET_FACT | Register files per entry
-  set_fact: >
-    ssl_aggr_pair='[{% for item in ssl_pairs %}{ "name": "{{ item }}", "cert": "{{ ssl_cert_dir }}/{{ item }}.crt", "private": "{{ ssl_private_dir }}/{{ item }}.key", "local_cert": "{{ ssl_local_cert_dir }}/{{ item }}.crt", "local_private": "{{ ssl_local_private_dir }}/{{ item }}.key" }{% if not loop.last %},{% endif %}{% endfor %}]'
+#- name: INCLUDE | Check all local keys
+#  name: checks.yml
 
-- name: LOCAL_ACTION COMMAND | Get certs modulus
-  local_action: command openssl x509 -noout -modulus -in {{ item.local_cert }}
-  become: no
-  with_items: ssl_aggr_pair
-  register: cert_modulus
-  changed_when: false
+- name: INCLUDE | Deploy all files
+  include: deploy.yml
 
-- name: LOCAL_ACTION COMMAND | Get keys modulus
-  local_action: command openssl rsa -noout -modulus -in {{ item.local_private }}
-  become: no
-  with_items: ssl_aggr_pair
-  register: key_modulus
-  changed_when: false
-
-- name: FAIL | Check key/cert matches
-  fail: msg="Pair miss-match!"
-  when: cert_modulus.results is defined
-  failed_when: '"{{ item.0.stdout }}" != "{{ item.1.stdout }}"'
-  with_together:
-    - cert_modulus.results
-    - key_modulus.results
-
-- name: COPY | Deploy private keys
-  copy: >
-    src={{ item.local_private }}
-    dest={{ item.private }}
-    owner=root
-    group=root
-    mode=0600
-  with_items: ssl_aggr_pair
-
-- name: COPY | Deploy certificates
-  copy: >
-    src={{ item.local_cert }}
-    dest={{ item.cert }}
-    owner=root
-    group=root
-    mode=0644
-  with_items: ssl_aggr_pair
-
-# Dyn notify -> https://github.com/ansible/ansible/pull/6755#issuecomment-118825790

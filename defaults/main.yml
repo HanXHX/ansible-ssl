@@ -1,13 +1,19 @@
 ---
 # local directories
 ssl_local_root_dir: './ssl_files'
-ssl_local_cert_dir: '{{ ssl_local_root_dir }}/certs'
+ssl_local_certs_dir: '{{ ssl_local_root_dir }}/certs'
 ssl_local_private_dir: '{{ ssl_local_root_dir }}/private'
+ssl_local_dh_dir: '{{ ssl_local_root_dir }}/dh'
 
 # remote directories
-ssl_root_dir: '/etc/nginx/ssl'
-ssl_cert_dir: '{{ ssl_root_dir }}/certs'
+ssl_root_dir: '/etc/ansible/ssl'
+ssl_certs_dir: '{{ ssl_root_dir }}/certs'
 ssl_private_dir: '{{ ssl_root_dir }}/private'
+ssl_dh_dir: '{{ ssl_root_dir }}/dh'
 
 ssl_pairs: []
 ssl_notify: 'dummy'
+
+# Diffie-Hellman
+ssl_dh: []
+ssl_dh_key_size: 2048

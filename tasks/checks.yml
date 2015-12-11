@@ -1,0 +1,23 @@
+---
+
+- name: LOCAL_ACTION COMMAND | Get certs modulus
+  local_action: command openssl x509 -noout -modulus -in {{ item.local_cert }}
+  become: no
+  with_items: ssl_aggr_pair
+  register: cert_modulus
+  changed_when: false
+
+- name: LOCAL_ACTION COMMAND | Get keys modulus
+  local_action: command openssl rsa -noout -modulus -in {{ item.local_private }}
+  become: no
+  with_items: ssl_aggr_pair
+  register: key_modulus
+  changed_when: false
+
+- name: FAIL | Check key/cert matches
+  fail: msg="Pair miss-match!"
+  when: cert_modulus.results is defined
+  failed_when: '"{{ item.0.stdout }}" != "{{ item.1.stdout }}"'
+  with_together:
+    - cert_modulus.results
+    - key_modulus.results

@@ -1,0 +1,21 @@
+---
+
+- name: LOCAL_ACTION COMMAND | Creates self-signed certificate with private key 
+  local_action: >
+    command openssl req -new -nodes -x509 -days {{ item.days | default('365') }} -newkey rsa:2048 
+    -keyout {{ ssl_local_private_dir }}/{{ item.name }}.key 
+    -out {{ ssl_local_certs_dir }}/{{ item.name }}.crt 
+    -subj "{{ item.subj | default('/CN=toto.com') }}" 
+    creates={{ ssl_local_private_dir }}/{{ item.name }}.key
+  with_items: ssl_pairs
+  when: item.generate
+  become: no
+  register: rsp
+
+- name: LOCAL_ACTION COMMAND | Create Diffie-Hellman key
+  local_action: >
+    command openssl dhparam -out {{ ssl_local_dh_dir }}/{{ item.name }}.pem {{ item.size | default(ssl_dh_key_size) }}
+    creates={{ ssl_local_dh_dir }}/{{ item.name }}.pem
+  with_items: ssl_dh
+  become: no
+  register: rdh
